@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import javax.swing.JButton;
@@ -39,16 +40,45 @@ public class MainFrame extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("start")) {
 			try {
-				Process pr = Runtime.getRuntime().exec("ffmpeg");
-				BufferedReader out = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-				String strOut = null;
-				while ((strOut = out.readLine()) != null) {
-					cmdStdout.append(strOut + "\n");
-				}
-			
-				cmdStdout.append("\n\nExit Value: "+ pr.exitValue());
+				String[] cmd = { "ffmpeg" , "-i" , "asdf"};
+				Process pr = Runtime.getRuntime().exec(cmd);
+				//BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+				InputStream in = pr.getInputStream();
+				InputStream in2 = pr.getErrorStream();
+				StringBuffer strOut = new StringBuffer();
+				StringBuffer strOut2 = new StringBuffer();
+				//String strOut = null;		
+//				while (true) {
+//					strOut = in.readLine();
+//					cmdStdout.append(strOut + "\n");
+//					System.out.println("tu sam");
+//					if (false) break;
+//				}
+					int ch;
+				   while ((ch = in.read()) != -1)
+		            {
+		                strOut.append((char)ch + "");
+		            }
+				   cmdStdout.setText(strOut.toString());
+				   
+					int ch2;
+					   while ((ch2 = in2.read()) != -1)
+			            {
+			                strOut2.append((char)ch2 + "");
+			            }
+					   cmdStdout.append(strOut2.toString());
+				
+				
+				in.close();
+				in2.close();
+				//pr.destroy();
+				
+				cmdStdout.append("\n\nExit Value: "+ pr.waitFor());
 				
 			} catch (IOException e1) {				
+				e1.printStackTrace();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
