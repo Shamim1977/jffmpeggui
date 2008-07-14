@@ -40,40 +40,43 @@ public class MainFrame extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("start")) {
 			try {
-				String[] cmd = { "ffmpeg" , "-i" , "asdf"};
+				//for win env.
+				String[] cmd = { "cmd.exe", "/C", "ffmpeg"};
+				
 				Process pr = Runtime.getRuntime().exec(cmd);
-				//BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-				InputStream in = pr.getInputStream();
+				BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+//				BufferedReader inErr = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
+//				InputStream in = pr.getInputStream();
 				InputStream in2 = pr.getErrorStream();
-				StringBuffer strOut = new StringBuffer();
+//				StringBuffer strOut = new StringBuffer();
 				StringBuffer strOut2 = new StringBuffer();
-				//String strOut = null;		
-//				while (true) {
-//					strOut = in.readLine();
-//					cmdStdout.append(strOut + "\n");
-//					System.out.println("tu sam");
-//					if (false) break;
-//				}
-					int ch;
-				   while ((ch = in.read()) != -1)
-		            {
-		                strOut.append((char)ch + "");
-		            }
-				   cmdStdout.setText(strOut.toString());
-				   
-					int ch2;
-					   while ((ch2 = in2.read()) != -1)
-			            {
-			                strOut2.append((char)ch2 + "");
-			            }
-					   cmdStdout.append(strOut2.toString());
+				String strOut = null;		
+				while ((strOut = in.readLine()) != null && in.ready()) {					
+					cmdStdout.append(strOut + "\n");
+					System.out.println("tu sam");					
+				}
+//					int ch;
+//				   while ((ch = in.read()) != -1)
+//		            {
+//		                strOut.append((char)ch + "");
+//		            }
+//				   cmdStdout.setText(strOut.toString());
+//				   
+//					int ch2;
+//					   while ((ch2 = in2.read()) != -1)
+//			            {
+//			                strOut2.append((char)ch2 + "");
+//			            }
+//					   cmdStdout.append(strOut2.toString());
 				
 				
 				in.close();
 				in2.close();
 				//pr.destroy();
 				
+				pr.destroy();
 				cmdStdout.append("\n\nExit Value: "+ pr.waitFor());
+				
 				
 			} catch (IOException e1) {				
 				e1.printStackTrace();
